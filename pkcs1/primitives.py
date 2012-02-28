@@ -2,10 +2,22 @@ import math
 import random
 import fractions
 
+try:
+    import gmpy
+    print 'Using gmpy...'
+except ImportError:
+    gmpy = None
+
 from primes import get_prime, DEFAULT_ITERATION
 
 
 '''Primitive functions extracted from the PKCS1 RFC'''
+
+def _pow(a, b, mod):
+    if gmpy:
+        return long(pow(gmpy.mpz(a), gmpy.mpz(b), gmpy.mpz(mod)))
+    else:
+        return pow(a, b, mod)
 
 class RsaPublicKey(object):
     __slots__ = ('n', 'e', 'k')
@@ -71,12 +83,12 @@ def os2ip(x):
 def rsaep(public_key, m):
     if not (0 <= m <= public_key.n-1):
         raise ValueError('message representative out of range')
-    return pow(m, public_key.e, public_key.n)
+    return _pow(m, public_key.e, public_key.n)
 
 def rsadp(private_key, c):
     if not (0 <= c <= private_key.n-1):
         raise ValueError('ciphertext representative out of range')
-    return pow(c, private_key.d, private_key.n)
+    return _pow(c, private_key.d, private_key.n)
 
 def rsasp1(private_key, m):
     if not (0 <= m <= private_key.n-1):
