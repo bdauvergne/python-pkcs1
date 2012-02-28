@@ -1,0 +1,3 @@
+recursive-include ref *.txt.gz
+recursive-include tests *.txt *.py
+include README.rst
