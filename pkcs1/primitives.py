@@ -4,7 +4,6 @@ import fractions
 
 try:
     import gmpy
-    print 'Using gmpy...'
 except ImportError:
     gmpy = None
 
