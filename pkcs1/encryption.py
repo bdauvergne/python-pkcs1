@@ -3,7 +3,7 @@ import random
 from primitives import os2ip, rsaep, i2osp, rsadp
 import codec_v15
 
-def rsaes_pkcs1v15_encrypt(public_key, message, ps=None, random=random.SystemRandom):
+def rsaes_pkcs1v15_encrypt(public_key, message, ps=None, rnd=random.SystemRandom):
     '''Encrypt message using public_key applying PKCS#1 v1.5 padding
 
        If ps is not None it is used as the pseudo-random padding bytes,
@@ -13,7 +13,7 @@ def rsaes_pkcs1v15_encrypt(public_key, message, ps=None, random=random.SystemRan
     m_len = len(message)
     if m_len > k - 11:
         raise ValueError('message too long')
-    em = codec_v15.pkcs1v15_encode(message, k, ps=ps, random=random)
+    em = codec_v15.pkcs1v15_encode(message, k, ps=ps, rnd=rnd)
     m = os2ip(em)
     c = rsaep(public_key, m)
     return i2osp(c, k)
