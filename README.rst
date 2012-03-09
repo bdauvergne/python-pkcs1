@@ -9,9 +9,9 @@ Performance are improved by using the gmpy package to compute modular
 exponentiation if it is present.
 
 The package contains the following modules
-- pkcs1.primitives
-- pkcs1.oaep
-- pkcs1.codec_v15
-- pkcs1.primes
-- pkcs1.encryption
-- pkcs1.signature
+  - pkcs1.primitives
+  - pkcs1.oaep
+  - pkcs1.codec_v15
+  - pkcs1.primes
+  - pkcs1.encryption
+  - pkcs1.signature
