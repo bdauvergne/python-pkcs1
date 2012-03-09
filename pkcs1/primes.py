@@ -2,19 +2,40 @@ import random
 import math
 import fractions
 
+try:
+    import gmpy
+except ImportError:
+    gmpy = None
+
 DEFAULT_ITERATION = 1000
 
-def get_prime(size=128, random=random.SystemRandom, k=DEFAULT_ITERATION):
-    random = random()
-    while True:
-        n = random.getrandbits(size-2)
+def is_prime(n, rnd=random.SystemRandom, k=DEFAULT_ITERATION):
+    if gmpy:
+        return gmpy.is_prime(n)
+    else:
+        return miller_rabin(n, k, rnd=rnd)
+
+
+if not gmpy:
+    def get_prime(size=128, rnd=random.SystemRandom, k=DEFAULT_ITERATION):
+        if callable(rnd):
+            rnd = rnd()
+        while True:
+            n = rnd.getrandbits(size-2)
+            n = 2 ** (size-1) + n * 2 + 1
+            if is_prime(n):
+                return n
+else:
+    def get_prime(size=128, rnd=random.SystemRandom, k=DEFAULT_ITERATION):
+        if callable(rnd):
+            rnd = rnd()
+        n = rnd.getrandbits(size-2)
         n = 2 ** (size-1) + n * 2 + 1
-        sys.stdout.write('\r')
-
-        if miller_rabin(n, k):
+        if gmpy.is_prime(n):
             return n
+        return gmpy.next_prime(n)
 
-def miller_rabin(n, k):
+def miller_rabin(n, k, rnd=random.SystemRandom):
     s = 0
     d = n-1
     # Find nearest power of 2
@@ -22,9 +43,11 @@ def miller_rabin(n, k):
     # Find greatest factor which is a power of 2
     s = fractions.gcd(2**s, n-1)
     d = (n-1) // s
+    if callable(rnd):
+        rnd = rnd()
     while k:
         k = k - 1
-        a = random.randint(2, n-2)
+        a = rnd.randint(2, n-2)
         x = pow(a,d,n)
         if x == 1 or x == n - 1:
             continue

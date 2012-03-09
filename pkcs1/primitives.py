@@ -102,11 +102,9 @@ def rsavp1(public_key, s):
 def string_xor(a, b):
     return ''.join((chr(ord(x) ^ ord(y)) for (x,y) in zip(a,b)))
 
-def generate_key_pair(size=512, random=random.SystemRandom, k=DEFAULT_ITERATION):
-    print 'generating first prime'
-    p = get_prime(size, random, k)
-    print 'generating second prime'
-    q = get_prime(size, random, k)
+def generate_key_pair(size=512, rnd=random.SystemRandom, k=DEFAULT_ITERATION):
+    p = get_prime(size, rnd, k)
+    q = get_prime(size, rnd, k)
     n = p*q
     lbda = (p-1)*(q-1)
     print 'generating e'
