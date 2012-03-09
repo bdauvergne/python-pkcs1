@@ -119,3 +119,16 @@ class Pkcs15PaddingTests(unittest.TestCase):
                         signature)
                 self.assertTrue(pkcs1.signature.rsassa_pkcs1_v15_verify(public_key, message,
                         signature))
+
+    def test_encryption2(self):
+        for example in self.pkcs15_encryption_data.examples:
+            public_key = example.public_key
+            private_key = example.private_key
+            message = 'test coin coin'
+            encrypted_message = \
+                pkcs1.encryption.rsaes_pkcs1v15_encrypt(public_key, message)
+            decrypted_message = \
+                pkcs1.encryption.rsaes_pkcs1v15_decrypt(private_key,
+                        encrypted_message)
+            self.assertEqual(message, decrypted_message)
+
