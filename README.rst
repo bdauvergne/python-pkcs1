@@ -8,7 +8,7 @@ using only pure python and external dependencies only for performance gains.
 Performance are improved by using the gmpy package to compute modular
 exponentiation if it is present.
 
-The package contains the following modules::
+The package contains the following modules:
 
   - pkcs1.primitives
   - pkcs1.oaep
