@@ -1,11 +1,8 @@
 import random
 import hashlib
+from primitives import get_nonzero_random_bytes
 
-
-def get_nonzero_random_bits(octets, random=random.SystemRandom):
-    return ''.join((chr(random.randint(1,255)) for j in xrange(octets)))
-
-def pkcs1v15_encode(message, k, ps=None, random=random.SystemRandom):
+def pkcs1v15_encode(message, k, ps=None, rnd=random.SystemRandom):
     '''Take a message of length inferior to k - 11 and return
        the concatenation of length k:
 
@@ -22,7 +19,7 @@ def pkcs1v15_encode(message, k, ps=None, random=random.SystemRandom):
         if len(ps) != ps_len:
             raise ValueError('given pseudorandom string length is wrong', len(ps), ps_len)
     else:
-        ps = get_nonzero_random_bits(ps_len, random=random)
+        ps = get_nonzero_random_bytes(ps_len, rnd=rnd)
     return '\x00\x02%s\x00%s' % (ps, message)
 
 def pkcs1v15_decode(message):

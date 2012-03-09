@@ -127,3 +127,16 @@ def generate_key_pair(size=512, random=random.SystemRandom, k=DEFAULT_ITERATION)
 def check_rsa_keys_coherency(public_key, private_key):
     '''Check that the public and private key match each other'''
     return public_key.n == private_key.n
+
+def get_nonzero_random_bytes(length, rnd=random.SystemRandom):
+    result = []
+    i = 0
+    if callable(rnd):
+        rnd = rnd()
+    while i < length:
+        l = rnd.getrandbits(12*length)
+        s = i2osp(l, 3*length)
+        s = s.replace('\x00', '')
+        result.append(s)
+        i += len(s)
+    return (''.join(result))[:length]
