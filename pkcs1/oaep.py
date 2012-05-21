@@ -16,7 +16,7 @@ def mgf1(mgf_seed, mask_len, hash_class=hashlib.sha1):
 
 
 def rsaes_oaep_encrypt(public_key, message, label='', hash_class=hashlib.sha1,
-        mgf=mgf1, random=random.SystemRandom):
+        mgf=mgf1, seed=None, random=random.SystemRandom):
     hash = hash_class()
     h_len = hash.digest_size
     k = public_key.k
@@ -29,8 +29,8 @@ def rsaes_oaep_encrypt(public_key, message, label='', hash_class=hashlib.sha1,
     label_hash = hash.digest()
     ps = '\0' * int(max_message_length - len(message))
     db = ''.join((label_hash, ps, '\x01', message))
-    seed = i2osp(random().getrandbits(h_len*8), h_len)
-    print 'h_len', repr(h_len)
+    if not seed:
+        seed = i2osp(random().getrandbits(h_len*8), h_len)
     db_mask = mgf(seed, k - h_len - 1, hash_class=hash_class)
     masked_db = string_xor(db, db_mask)
     seed_mask = mgf(masked_db, h_len, hash_class=hash_class)
@@ -38,7 +38,6 @@ def rsaes_oaep_encrypt(public_key, message, label='', hash_class=hashlib.sha1,
     em = ''.join(('\x00', masked_seed, masked_db))
     m = os2ip(em)
     c = rsaep(public_key, m)
-    print 'log2', math.log(c, 2)
     output = i2osp(c, k)
     return output
 
