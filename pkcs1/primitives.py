@@ -8,6 +8,7 @@ except ImportError:
     gmpy = None
 
 from primes import get_prime, DEFAULT_ITERATION
+import exceptions
 
 
 '''Primitive functions extracted from the PKCS1 RFC'''
@@ -66,7 +67,7 @@ def euclide_gcd(a,b):
 
 def i2osp(x, x_len):
     if x > 256**x_len:
-        raise ValueError('integer too large')
+        raise exceptions.IntegerTooLarge
     h = hex(x)[2:]
     if h[-1] == 'L':
         h = h[:-1]
@@ -81,33 +82,33 @@ def os2ip(x):
 
 def rsaep(public_key, m):
     if not (0 <= m <= public_key.n-1):
-        raise ValueError('message representative out of range')
+        raise exceptions.MessageRepresentativeOutOfRange
     return _pow(m, public_key.e, public_key.n)
 
 def rsadp(private_key, c):
     if not (0 <= c <= private_key.n-1):
-        raise ValueError('ciphertext representative out of range')
+        raise exceptions.CiphertextRepresentativeOutOfRange
     return _pow(c, private_key.d, private_key.n)
 
 def rsasp1(private_key, m):
     if not (0 <= m <= private_key.n-1):
-        raise ValueError('message representative out of range')
+        raise exceptions.MessageRepresentativeOutOfRange
     return rsadp(private_key, m)
 
 def rsavp1(public_key, s):
     if not (0 <= s <= public_key.n-1):
-        raise ValueError('signature representative out of range')
+        raise exceptions.SignatureRepresentativeOutOfRange
     return rsaep(public_key, s)
 
 def string_xor(a, b):
     return ''.join((chr(ord(x) ^ ord(y)) for (x,y) in zip(a,b)))
 
 def generate_key_pair(size=512, rnd=random.SystemRandom, k=DEFAULT_ITERATION):
+    '''Generates a key pair'''
     p = get_prime(size, rnd, k)
     q = get_prime(size, rnd, k)
     n = p*q
     lbda = (p-1)*(q-1)
-    print 'generating e'
     e = 0x10001
     while e < lbda:
         if fractions.gcd(e, lbda) == 1:
@@ -138,3 +139,10 @@ def get_nonzero_random_bytes(length, rnd=random.SystemRandom):
         result.append(s)
         i += len(s)
     return (''.join(result))[:length]
+
+def constant_time_cmp(a, b):
+    '''Compare two strings using constant time'''
+    result = True
+    for x, y in zip(a,b):
+        result &= (x == y)
+    return result

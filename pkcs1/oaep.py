@@ -2,8 +2,10 @@ import hashlib
 import random
 
 from primitives import (integer_ceil, i2osp, os2ip, string_xor, rsaep, rsadp)
+import exceptions
 
 def mgf1(mgf_seed, mask_len, hash_class=hashlib.sha1):
+    '''Mask Generation Function v1'''
     h_len = hash_class().digest_size
     if mask_len > 0x10000:
         raise ValueError('mask too long')
@@ -16,14 +18,31 @@ def mgf1(mgf_seed, mask_len, hash_class=hashlib.sha1):
 
 def rsaes_oaep_encrypt(public_key, message, label='', hash_class=hashlib.sha1,
         mgf=mgf1, seed=None, random=random.SystemRandom):
+    '''Encrypt a byte message using a RSA public key and the OAEP wrapping
+       algorithm,
+
+       Parameters:
+       public_key - an RSA public key
+       message - a byte string
+       label - a label a per-se PKCS#1 standard
+       hash_class - a Python class for a message digest algorithme respecting
+         the hashlib interface
+       mgf1 - a mask generation function
+       seed - a seed to use instead of generating it using a random generator
+       random - a random generator class, respecting the random generator
+       interface from the random module, if seed is None, it is used to
+       generate it.
+
+       Return value:
+       the encrypted string of the same length as the public key
+    '''
+
     hash = hash_class()
     h_len = hash.digest_size
     k = public_key.k
-    # FIXME: we should check that the label does not exceed the hash algorith
-    # max input size, but we do not have this information
     max_message_length = k - 2 * h_len - 2
     if len(message) > max_message_length:
-        raise ValueError('message too long')
+        raise exceptions.MessageTooLong
     hash.update(label)
     label_hash = hash.digest()
     ps = '\0' * int(max_message_length - len(message))
@@ -41,7 +60,20 @@ def rsaes_oaep_encrypt(public_key, message, label='', hash_class=hashlib.sha1,
     return output
 
 def rsaes_oaep_decrypt(private_key, message, label='', hash_class=hashlib.sha1,
-        mgf=mgf1, random=random.SystemRandom):
+        mgf=mgf1):
+    '''Decrypt a byte message using a RSA private key and the OAEP wrapping algorithm,
+
+       Parameters:
+       public_key - an RSA public key
+       message - a byte string
+       label - a label a per-se PKCS#1 standard
+       hash_class - a Python class for a message digest algorithme respecting
+         the hashlib interface
+       mgf1 - a mask generation function
+
+       Return value:
+       the string before encryption (decrypted)
+    '''
     hash = hash_class()
     h_len = hash.digest_size
     k = private_key.k
@@ -65,11 +97,11 @@ def rsaes_oaep_decrypt(private_key, message, label='', hash_class=hashlib.sha1,
     label_hash_prime, rest = db[:h_len], db[h_len:]
     i = rest.find('\x01')
     if i == -1:
-        raise ValueError('decryption error')
+        raise exceptions.DecryptionError
     if rest[:i].strip('\x00') != '':
-        raise ValueError('decryption error')
+        raise exceptions.DecryptionError
     m = rest[i+1:]
     if label_hash_prime != label_hash:
-        raise ValueError('decryption error')
+        raise exceptions.DecryptionError
     return m
 

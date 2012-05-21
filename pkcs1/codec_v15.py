@@ -1,6 +1,8 @@
 import random
 import hashlib
+
 from primitives import get_nonzero_random_bytes
+import exceptions
 
 def pkcs1v15_encode(message, k, ps=None, rnd=random.SystemRandom):
     '''Take a message of length inferior to k - 11 and return
@@ -13,23 +15,25 @@ def pkcs1v15_encode(message, k, ps=None, rnd=random.SystemRandom):
     '''
     m_len = len(message)
     if m_len > k - 11:
-        raise ValueError('message too long')
+        raise exceptions.MessageTooLong
     ps_len = k - len(message) - 3
     if ps:
         if len(ps) != ps_len:
-            raise ValueError('given pseudorandom string length is wrong', len(ps), ps_len)
+            raise exceptions.WrongLength(
+                    'given pseudorandom string length is wrong',
+                    len(ps), ps_len)
     else:
         ps = get_nonzero_random_bytes(ps_len, rnd=rnd)
     return '\x00\x02%s\x00%s' % (ps, message)
 
 def pkcs1v15_decode(message):
     if message[0:2] != '\x00\x02':
-        raise ValueError('decryption error')
+        raise exceptions.DecryptionError
     i = message.find('\x00', 2)
     if i == -1:
-        raise ValueError('decryption error')
+        raise exceptions.DecryptionError
     if i < 10:
-        raise ValueError('decryption error')
+        raise exceptions.DecryptionError
     return message[i+1:]
 
 DIGEST_INFO_PREFIXES = {
@@ -48,7 +52,7 @@ def emsa_pkcs1v15_encode(message, em_len, ps=None, hash_class=hashlib.sha1):
     except KeyError:
         raise NotImplemented('hash algorithm is unsupported', hash_class)
     if em_len < len(t) + 11:
-        raise ValueError("intended encoded message length too short")
+        raise exceptions.MessageTooShort
     ps_len = em_len - len(t) - 3
     ps = '\xff' * ps_len
     return '\x00\x01%s\x00%s' % (ps, t)
