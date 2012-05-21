@@ -1,6 +1,5 @@
 import hashlib
 import random
-import math
 
 from primitives import (integer_ceil, i2osp, os2ip, string_xor, rsaep, rsadp)
 
