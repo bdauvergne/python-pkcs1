@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from distutils.core import setup, Command
+from setuptools import setup, find_packages, Command
 from unittest import TextTestRunner, TestLoader
 from glob import glob
 from os.path import splitext, basename, join as pjoin
@@ -36,5 +36,5 @@ setup(name='pkcs1',
         url='https://github.com/bdauvergne/python-pkcs1',
         author='Benjamin Dauvergne',
         author_email='bdauvergne@entrouvert.com',
-        packages=['pkcs1'],
+        packages=find_packages(os.path.dirname(__file__) or '.'),
         cmdclass={'test': TestCommand})
