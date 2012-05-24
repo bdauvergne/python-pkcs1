@@ -41,6 +41,14 @@ b4 1f 7c 80 08 34 d2 c6 e0 6b ce 3b ce 7e a9 a5
 # RSA public exponent e: 
 01 00 01 
 
+# Exponent:
+05 0e 2c 3e 38 d8 86 11 02 88 df c6 8a 95 33 e7 e1 2e 27 d2 aa 56 d2 cd 
+b3 fb 6e fa 99 0b cf f2 9e 1d 29 87 fb 71 19 62 86 0e 73 91 b1 ce 01 eb 
+ad b9 e8 12 d2 fb df af 25 df 4a e2 61 10 a6 d7 a2 6f 0b 81 0f 54 87 5e 
+17 dd 5c 9f b6 d6 41 76 12 45 b8 1e 79 f8 c8 8f 0e 55 a6 dc d5 f1 33 ab 
+d3 5f 8f 4e c8 0a df 1b f8 62 77 a5 82 89 4c b6 eb cd 21 62 f1 c7 53 4f 
+1f 49 47 b1 29 15 1b 71 
+
 # Prime p: 
 d1 7f 65 5b f2 7c 8b 16 d3 54 62 c9 05 cc 04 a2 
 6f 37 e2 a6 7f a9 c0 ce 0d ce d4 72 39 4a 0d f7 
