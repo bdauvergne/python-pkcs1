@@ -30,3 +30,6 @@ class CiphertextRepresentativeOutOfRange(PKCS1BaseException):
 
 class SignatureRepresentativeOutOfRange(PKCS1BaseException):
     pass
+
+class EncodingError(PKCS1BaseException):
+    pass
