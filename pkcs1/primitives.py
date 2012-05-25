@@ -146,3 +146,9 @@ def constant_time_cmp(a, b):
     for x, y in zip(a,b):
         result &= (x == y)
     return result
+import textwrap
+
+def dump_hex(data):
+    if isinstance(data, basestring):
+        print 'length', len(data)
+        print textwrap.fill(''.join(['%s ' % x.encode('hex') for x in data]), 72)

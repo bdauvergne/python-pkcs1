@@ -2,10 +2,11 @@ import hashlib
 import random
 
 from primitives import (i2osp, os2ip, string_xor, rsaep, rsadp)
+import primitives
 import exceptions
 from mgf import mgf1
 
-def rsaes_oaep_encrypt(public_key, message, label='', hash_class=hashlib.sha1,
+def encrypt(public_key, message, label='', hash_class=hashlib.sha1,
         mgf=mgf1, seed=None, random=random.SystemRandom):
     '''Encrypt a byte message using a RSA public key and the OAEP wrapping
        algorithm,
@@ -48,7 +49,7 @@ def rsaes_oaep_encrypt(public_key, message, label='', hash_class=hashlib.sha1,
     output = i2osp(c, k)
     return output
 
-def rsaes_oaep_decrypt(private_key, message, label='', hash_class=hashlib.sha1,
+def decrypt(private_key, message, label='', hash_class=hashlib.sha1,
         mgf=mgf1):
     '''Decrypt a byte message using a RSA private key and the OAEP wrapping algorithm,
 
@@ -76,7 +77,7 @@ def rsaes_oaep_decrypt(private_key, message, label='', hash_class=hashlib.sha1,
     # 4. EME-OAEP decoding
     hash.update(label)
     label_hash = hash.digest()
-    y, masked_seed, masked_db = em[0], em[1:h_len], em[1+h_len:]
+    y, masked_seed, masked_db = em[0], em[1:h_len+1], em[1+h_len:]
     if y != '\x00':
         raise ValueError('decryption error')
     seed_mask = mgf(masked_db, h_len)

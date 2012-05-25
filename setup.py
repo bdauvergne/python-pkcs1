@@ -30,7 +30,7 @@ class TestCommand(Command):
         t.run(tests)
 
 setup(name='pkcs1',
-        version='0.2',
+        version='0.9.0',
         license='MIT',
         description='Python implementation of the RFC3447 or PKCS #1 version 2.0',
         url='https://github.com/bdauvergne/python-pkcs1',

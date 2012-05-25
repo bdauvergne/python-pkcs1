@@ -1,8 +1,8 @@
-from codec_v15 import emsa_pkcs1v15_encode
+import emsa_pkcs1_v15
 from primitives import os2ip, rsasp1, i2osp, rsavp1, constant_time_cmp
 import exceptions
 
-def rsassa_pkcs1_v15_sign(private_key, message):
+def sign(private_key, message):
     '''Produce a signature of string using a RSA private key and PKCS#1.5
        padding.
 
@@ -15,12 +15,12 @@ def rsassa_pkcs1_v15_sign(private_key, message):
        the signature string
     '''
 
-    em = emsa_pkcs1v15_encode(message, private_key.k)
+    em = emsa_pkcs1_v15.encode(message, private_key.k)
     m = os2ip(em)
     s = rsasp1(private_key, m)
     return i2osp(s, private_key.k)
 
-def rsassa_pkcs1_v15_verify(public_key, message, signature):
+def verify(public_key, message, signature):
     '''Verify a signature of a message using a RSA public key and PKCS#1.5
        padding.
 
@@ -45,7 +45,7 @@ def rsassa_pkcs1_v15_verify(public_key, message, signature):
     except ValueError:
         raise exceptions.InvalidSignature
     try:
-        em_prime = emsa_pkcs1v15_encode(message, public_key.k)
+        em_prime = emsa_pkcs1_v15.encode(message, public_key.k)
     except ValueError:
         raise exceptions.RSAModulusTooShort
     return constant_time_cmp(em, em_prime)
