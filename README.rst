@@ -10,9 +10,13 @@ exponentiation if it is present.
 
 The package contains the following modules:
 
-  - pkcs1.primitives
-  - pkcs1.oaep
-  - pkcs1.codec_v15
-  - pkcs1.primes
-  - pkcs1.encryption
-  - pkcs1.signature
+  - pkcs1.primitives - basic RSA exponentation, integer<->byte string conversion
+  - pkcs1.primes - prime number generation
+  - pkcs1.eme_pkcs1_v15 - PKCS#1 v1.5 encoding for encryption
+  - pkcs1.emsa_pkcs1_v15 - PKCS#1 v1.5 encoding for signature
+  - pkcs1.mgf - mask generation function number one
+  - pkcs1.exceptions - specialized exceptions
+  - pkcs1.rsaes_pkcs1_v15 - RSA encryption using PKCS#1 v1.5 padding
+  - pkcs1.rsaes_oaep - RSA encryption using non-deterministic OAEP padding
+  - pkcs1.rsassa_pkcs1_v15 - RSA signature using PKCS#1 v1.5 encoding
+  - pkcs1.rsassa_pss - RSA signature using non-deterministic encoding
