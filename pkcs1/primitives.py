@@ -43,15 +43,25 @@ class RsaPrivateKey(object):
 
 
 def integer_ceil(a, b):
-    b = int(b)
-    x = a % b
-    if x > 0:
-        return int(a) / b + 1
-    else:
-        return int(a) / b
+    quanta, mod = divmod(a, b)
+    if mod:
+        quanta += 1
+    return int(math.ceil(float(a) / float(b)))
 
 def integer_byte_size(n):
-    return integer_ceil(math.log(n, 2), 8)
+    quanta, mod = divmod(integer_bit_size(n), 8)
+    if mod or n == 0:
+        quanta += 1
+    return quanta
+
+def integer_bit_size(n):
+    if n == 0:
+        return 1
+    s = 0
+    while n:
+        s += 1
+        n >>= 1
+    return s
 
 def euclide_gcd(a,b):
     if a > b:
@@ -103,10 +113,11 @@ def rsavp1(public_key, s):
 def string_xor(a, b):
     return ''.join((chr(ord(x) ^ ord(y)) for (x,y) in zip(a,b)))
 
-def generate_key_pair(size=512, rnd=random.SystemRandom, k=DEFAULT_ITERATION):
+def generate_key_pair(size=512, rnd=random.SystemRandom, k=DEFAULT_ITERATION,
+        primality_algorithm=None):
     '''Generates a key pair'''
-    p = get_prime(size, rnd, k)
-    q = get_prime(size, rnd, k)
+    p = get_prime(size >> 1, rnd, k, algorithm=primality_algorithm)
+    q = get_prime(size >> 1, rnd, k, algorithm=primality_algorithm)
     n = p*q
     lbda = (p-1)*(q-1)
     e = 0x10001
