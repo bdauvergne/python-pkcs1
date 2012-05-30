@@ -1,8 +1,7 @@
 import hashlib
 import random
 
-from primitives import (i2osp, os2ip, string_xor, rsaep, rsadp)
-import primitives
+from primitives import (i2osp, os2ip, string_xor)
 import exceptions
 from mgf import mgf1
 
@@ -45,7 +44,7 @@ def encrypt(public_key, message, label='', hash_class=hashlib.sha1,
     masked_seed = string_xor(seed, seed_mask)
     em = ''.join(('\x00', masked_seed, masked_db))
     m = os2ip(em)
-    c = rsaep(public_key, m)
+    c = public_key.rsaep(m)
     output = i2osp(c, k)
     return output
 
@@ -72,7 +71,7 @@ def decrypt(private_key, message, label='', hash_class=hashlib.sha1,
         raise ValueError('decryption error')
     # 2. RSA decryption
     c = os2ip(message)
-    m = rsadp(private_key, c)
+    m = private_key.rsadp(c)
     em = i2osp(m, k)
     # 4. EME-OAEP decoding
     hash.update(label)

@@ -2,11 +2,11 @@ import hashlib
 import random
 
 import primitives
-from mgf import mgf1
+import mgf
 import exceptions
 
 def encode(m, embits, hash_class=hashlib.sha1,
-        mgf=mgf1, salt=None, s_len=None, random=random.SystemRandom):
+        mgf=mgf.mgf1, salt=None, s_len=None, random=random.SystemRandom):
 
     m_hash = hash_class(m).digest()
     h_len = len(m_hash)
@@ -32,7 +32,7 @@ def encode(m, embits, hash_class=hashlib.sha1,
     masked_db = masked_db[:octets] + new_byte + masked_db[octets+1:]
     return masked_db + h + '\xbc'
 
-def verify(m, em, embits, hash_class=hashlib.sha1, mgf=mgf1, s_len=None):
+def verify(m, em, embits, hash_class=hashlib.sha1, mgf=mgf.mgf1, s_len=None):
     # 1. cannot verify, does not know the max input length of hash_class
     # 2.
     m_hash = hash_class(m).digest()

@@ -30,6 +30,16 @@ class RsaPublicKey(object):
     def __repr__(self):
         return '<RsaPublicKey n: %d e: %d k: %d>' % (self.n, self.e, self.k)
 
+    def rsavp1(self, s):
+        if not (0 <= s <= self.n-1):
+            raise exceptions.SignatureRepresentativeOutOfRange
+        return self.rsaep(s)
+
+    def rsaep(self, m):
+        if not (0 <= m <= self.n-1):
+            raise exceptions.MessageRepresentativeOutOfRange
+        return _pow(m, self.e, self.n)
+
 class RsaPrivateKey(object):
     __slots__ = ('n', 'd', 'k')
 
@@ -41,6 +51,15 @@ class RsaPrivateKey(object):
     def __repr__(self):
         return '<RsaPrivateKey n: %d d: %d k: %d>' % (self.n, self.d, self.k)
 
+    def rsadp(self, c):
+        if not (0 <= c <= self.n-1):
+            raise exceptions.CiphertextRepresentativeOutOfRange
+        return _pow(c, self.d, self.n)
+
+    def rsasp1(self, m):
+        if not (0 <= m <= self.n-1):
+            raise exceptions.MessageRepresentativeOutOfRange
+        return self.rsadp(m)
 
 def integer_ceil(a, b):
     quanta, mod = divmod(a, b)
@@ -89,26 +108,6 @@ def i2osp(x, x_len):
 def os2ip(x):
     h = x.encode('hex')
     return int(h, 16)
-
-def rsaep(public_key, m):
-    if not (0 <= m <= public_key.n-1):
-        raise exceptions.MessageRepresentativeOutOfRange
-    return _pow(m, public_key.e, public_key.n)
-
-def rsadp(private_key, c):
-    if not (0 <= c <= private_key.n-1):
-        raise exceptions.CiphertextRepresentativeOutOfRange
-    return _pow(c, private_key.d, private_key.n)
-
-def rsasp1(private_key, m):
-    if not (0 <= m <= private_key.n-1):
-        raise exceptions.MessageRepresentativeOutOfRange
-    return rsadp(private_key, m)
-
-def rsavp1(public_key, s):
-    if not (0 <= s <= public_key.n-1):
-        raise exceptions.SignatureRepresentativeOutOfRange
-    return rsaep(public_key, s)
 
 def string_xor(a, b):
     return ''.join((chr(ord(x) ^ ord(y)) for (x,y) in zip(a,b)))

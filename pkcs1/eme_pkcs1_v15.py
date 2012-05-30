@@ -1,6 +1,6 @@
 import random
 
-from primitives import get_nonzero_random_bytes
+import primitives
 import exceptions
 
 def encode(message, k, ps=None, rnd=random.SystemRandom):
@@ -22,7 +22,7 @@ def encode(message, k, ps=None, rnd=random.SystemRandom):
                     'given pseudorandom string length is wrong',
                     len(ps), ps_len)
     else:
-        ps = get_nonzero_random_bytes(ps_len, rnd=rnd)
+        ps = primitives.get_nonzero_random_bytes(ps_len, rnd=rnd)
     return '\x00\x02%s\x00%s' % (ps, message)
 
 def decode(message):

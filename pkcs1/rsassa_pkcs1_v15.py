@@ -1,5 +1,5 @@
 import emsa_pkcs1_v15
-from primitives import os2ip, rsasp1, i2osp, rsavp1, constant_time_cmp
+from primitives import os2ip, i2osp, constant_time_cmp
 import exceptions
 
 def sign(private_key, message):
@@ -17,7 +17,7 @@ def sign(private_key, message):
 
     em = emsa_pkcs1_v15.encode(message, private_key.k)
     m = os2ip(em)
-    s = rsasp1(private_key, m)
+    s = private_key.rsasp1(m)
     return i2osp(s, private_key.k)
 
 def verify(public_key, message, signature):
@@ -37,7 +37,7 @@ def verify(public_key, message, signature):
         raise exceptions.InvalidSignature
     s = os2ip(signature)
     try:
-        m = rsavp1(public_key, s)
+        m = public_key.rsavp1(s)
     except ValueError:
         raise exceptions.InvalidSignature
     try:
