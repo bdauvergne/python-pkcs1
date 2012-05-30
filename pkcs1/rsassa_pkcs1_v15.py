@@ -15,10 +15,10 @@ def sign(private_key, message):
        the signature string
     '''
 
-    em = emsa_pkcs1_v15.encode(message, private_key.k)
+    em = emsa_pkcs1_v15.encode(message, private_key.byte_size)
     m = primitives.os2ip(em)
     s = private_key.rsasp1(m)
-    return primitives.i2osp(s, private_key.k)
+    return primitives.i2osp(s, private_key.byte_size)
 
 def verify(public_key, message, signature):
     '''Verify a signature of a message using a RSA public key and PKCS#1.5
@@ -33,7 +33,7 @@ def verify(public_key, message, signature):
        Result:
        True if the signature matches the message, False otherwise.
     '''
-    if len(signature) != public_key.k:
+    if len(signature) != public_key.byte_size:
         raise exceptions.InvalidSignature
     s = primitives.os2ip(signature)
     try:
@@ -41,11 +41,11 @@ def verify(public_key, message, signature):
     except ValueError:
         raise exceptions.InvalidSignature
     try:
-        em = primitives.i2osp(m, public_key.k)
+        em = primitives.i2osp(m, public_key.byte_size)
     except ValueError:
         raise exceptions.InvalidSignature
     try:
-        em_prime = emsa_pkcs1_v15.encode(message, public_key.k)
+        em_prime = emsa_pkcs1_v15.encode(message, public_key.byte_size)
     except ValueError:
         raise exceptions.RSAModulusTooShort
     return primitives.constant_time_cmp(em, em_prime)

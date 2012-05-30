@@ -28,7 +28,7 @@ def encrypt(public_key, message, label='', hash_class=hashlib.sha1,
 
     hash = hash_class()
     h_len = hash.digest_size
-    k = public_key.k
+    k = public_key.byte_size
     max_message_length = k - 2 * h_len - 2
     if len(message) > max_message_length:
         raise exceptions.MessageTooLong
@@ -65,9 +65,9 @@ def decrypt(private_key, message, label='', hash_class=hashlib.sha1,
     '''
     hash = hash_class()
     h_len = hash.digest_size
-    k = private_key.k
+    k = private_key.byte_size
     # 1. check length
-    if len(message) != private_key.k or k < 2 * h_len + 2:
+    if len(message) != k or k < 2 * h_len + 2:
         raise ValueError('decryption error')
     # 2. RSA decryption
     c = primitives.os2ip(message)

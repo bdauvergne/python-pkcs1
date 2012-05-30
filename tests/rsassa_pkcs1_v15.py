@@ -13,7 +13,7 @@ class RsassaPkcs1V15Tests(unittest.TestCase):
             for sample in example.samples:
                 message = sample.message
                 signature = sample.signature
-                self.assertEqual(len(signature), private_key.k)
+                self.assertEqual(len(signature), private_key.byte_size)
                 self.assertEqual(rsassa_pkcs1_v15.sign(private_key, message),
                         signature)
 
@@ -23,7 +23,7 @@ class RsassaPkcs1V15Tests(unittest.TestCase):
             for sample in example.samples:
                 message = sample.message
                 signature = sample.signature
-                self.assertEqual(len(signature), public_key.k)
+                self.assertEqual(len(signature), public_key.byte_size)
                 self.assertTrue(rsassa_pkcs1_v15.verify(public_key, message,
                         signature))
 

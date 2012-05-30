@@ -10,7 +10,7 @@ def encrypt(public_key, message, ps=None, rnd=random.SystemRandom):
        If ps is not None it is used as the pseudo-random padding bytes,
        otherwise random is used to generate them
     '''
-    k = public_key.k
+    k = public_key.byte_size
     m_len = len(message)
     if m_len > k - 11:
         raise exceptions.MessageTooLong
@@ -23,7 +23,7 @@ def decrypt(private_key, encryption):
     '''Decrypt encryption of a message using private_key and using PKCS#1 v1.5
        padding scheme.
     '''
-    k = private_key.k
+    k = private_key.byte_size
     if len(encryption) != k:
         raise exceptions.DecryptionError
     c = primitives.os2ip(encryption)

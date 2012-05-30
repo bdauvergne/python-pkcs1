@@ -20,12 +20,14 @@ def _pow(a, b, mod):
         return pow(a, b, mod)
 
 class RsaPublicKey(object):
-    __slots__ = ('n', 'e', 'k')
+    __slots__ = ('n', 'e', 'bit_size', 'byte_size')
 
     def __init__(self, n, e):
-        self.k = integer_byte_size(n)
         self.n = n
         self.e = e
+        self.bit_size = integer_bit_size(n)
+        self.byte_size = integer_byte_size(n)
+
 
     def __repr__(self):
         return '<RsaPublicKey n: %d e: %d k: %d>' % (self.n, self.e, self.k)
@@ -41,12 +43,13 @@ class RsaPublicKey(object):
         return _pow(m, self.e, self.n)
 
 class RsaPrivateKey(object):
-    __slots__ = ('n', 'd', 'k')
+    __slots__ = ('n', 'd', 'bit_size', 'byte_size')
 
     def __init__(self, n, d):
-        self.k = integer_byte_size(n)
         self.n = n
         self.d = d
+        self.bit_size = integer_bit_size(n)
+        self.byte_size = integer_byte_size(n)
 
     def __repr__(self):
         return '<RsaPrivateKey n: %d d: %d k: %d>' % (self.n, self.d, self.k)
