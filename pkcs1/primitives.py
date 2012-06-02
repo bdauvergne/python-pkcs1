@@ -1,6 +1,7 @@
 import math
 import random
 import fractions
+import keys
 
 try:
     import gmpy
@@ -18,51 +19,6 @@ def _pow(a, b, mod):
         return long(pow(gmpy.mpz(a), gmpy.mpz(b), gmpy.mpz(mod)))
     else:
         return pow(a, b, mod)
-
-class RsaPublicKey(object):
-    __slots__ = ('n', 'e', 'bit_size', 'byte_size')
-
-    def __init__(self, n, e):
-        self.n = n
-        self.e = e
-        self.bit_size = integer_bit_size(n)
-        self.byte_size = integer_byte_size(n)
-
-
-    def __repr__(self):
-        return '<RsaPublicKey n: %d e: %d k: %d>' % (self.n, self.e, self.k)
-
-    def rsavp1(self, s):
-        if not (0 <= s <= self.n-1):
-            raise exceptions.SignatureRepresentativeOutOfRange
-        return self.rsaep(s)
-
-    def rsaep(self, m):
-        if not (0 <= m <= self.n-1):
-            raise exceptions.MessageRepresentativeOutOfRange
-        return _pow(m, self.e, self.n)
-
-class RsaPrivateKey(object):
-    __slots__ = ('n', 'd', 'bit_size', 'byte_size')
-
-    def __init__(self, n, d):
-        self.n = n
-        self.d = d
-        self.bit_size = integer_bit_size(n)
-        self.byte_size = integer_byte_size(n)
-
-    def __repr__(self):
-        return '<RsaPrivateKey n: %d d: %d k: %d>' % (self.n, self.d, self.k)
-
-    def rsadp(self, c):
-        if not (0 <= c <= self.n-1):
-            raise exceptions.CiphertextRepresentativeOutOfRange
-        return _pow(c, self.d, self.n)
-
-    def rsasp1(self, m):
-        if not (0 <= m <= self.n-1):
-            raise exceptions.MessageRepresentativeOutOfRange
-        return self.rsadp(m)
 
 def integer_ceil(a, b):
     quanta, mod = divmod(a, b)
@@ -132,7 +88,7 @@ def generate_key_pair(size=512, rnd=random.SystemRandom, k=DEFAULT_ITERATION,
     if d < 0:
         d += lbda
     assert (d*e) % lbda == 1
-    public, private = RsaPublicKey(n, e), RsaPrivateKey(n, d)
+    public, private = keys.RsaPublicKey(n, e), keys.RsaPrivateKey(n, d)
     assert check_rsa_keys_coherency(public, private)
     return public, private
 
