@@ -41,17 +41,24 @@ def integer_bit_size(n):
         n >>= 1
     return s
 
-def euclide_gcd(a,b):
-    if a > b:
-        x, y, h = euclide_gcd(b, a)
-        return y, x, h
-    c = b // a
-    b = b % a
-    if b == 0:
-        return 1, 0, a
-    x, y, h = euclide_gcd(a, b)
-    return x-c*y, y, h
-
+def bezout(a, b):
+    '''Copied from http://www.labri.fr/perso/betrema/deug/poly/euclide.html'''
+    u = 1
+    v = 0
+    s = 0
+    t = 1
+    while b > 0:
+        q = a // b
+        r = a % b
+        a = b
+        b = r
+        tmp = s
+        s = u - q * s
+        u = tmp
+        tmp = t
+        t = v - q * t
+        v = tmp
+    return u, v, a
 
 def i2osp(x, x_len):
     if x > 256**x_len:
@@ -83,7 +90,7 @@ def generate_key_pair(size=512, rnd=random.SystemRandom, k=DEFAULT_ITERATION,
         if fractions.gcd(e, lbda) == 1:
             break
         e += 2
-    d, y, z = euclide_gcd(e, lbda)
+    d, y, z = bezout(e, lbda)
     assert z == 1
     if d < 0:
         d += lbda
