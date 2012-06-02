@@ -1,3 +1,5 @@
+import operator
+
 import math
 import random
 import fractions
@@ -77,6 +79,36 @@ def os2ip(x):
 
 def string_xor(a, b):
     return ''.join((chr(ord(x) ^ ord(y)) for (x,y) in zip(a,b)))
+
+def product(*args):
+    return reduce(operator.__mul__, args)
+
+def generate_multiple_primes_key_pair(number=2, size=512, rnd=random.SystemRandom, k=DEFAULT_ITERATION,
+        primality_algorithm=None):
+    primes = []
+    lbda = 1
+    bits = size // number + 1
+    n = 1
+    while len(primes) < number:
+        if number - len(primes) == 1:
+            bits = size - integer_bit_size(n) + 1
+        print 'bits', bits
+        prime = get_prime(bits, rnd, k, algorithm=primality_algorithm)
+        if prime in primes:
+            continue
+        if number - len(primes) == 1 and integer_bit_size(n*prime) != size:
+            continue
+        primes.append(prime)
+        n *= prime
+    lbda = product(*[prime-1 for prime in primes])
+    e = 0x10001
+    while e < lbda:
+        if fractions.gcd(e, lbda) == 1:
+            break
+        e += 2
+    public = keys.RsaPublicKey(n, e)
+    private = keys.MultiPrimeRsaPrivateKey(primes, e)
+    return public, private
 
 def generate_key_pair(size=512, rnd=random.SystemRandom, k=DEFAULT_ITERATION,
         primality_algorithm=None):
