@@ -47,7 +47,7 @@ class RsaPrivateKey(object):
         return self.rsadp(m)
 
 class MultiPrimeRsaPrivateKey(object):
-    __slots__ = ('primes', 'n', 'e', 'exponents', 'crts', 'bit_size', 'byte_size')
+    __slots__ = ('primes', 'blind', 'blind_inv', 'n', 'e', 'exponents', 'crts', 'bit_size', 'byte_size')
 
     def __init__(self, primes, e):
         self.primes = primes
@@ -69,6 +69,8 @@ class MultiPrimeRsaPrivateKey(object):
             assert b == 1
             R *= prime
             self.crts.append(crt)
+        self.blind = None
+        self.blind_inv = None
 
 
     def __repr__(self):
@@ -80,11 +82,15 @@ class MultiPrimeRsaPrivateKey(object):
             raise exceptions.CiphertextRepresentativeOutOfRange
         R = 1
         m = 0
+        if self.blind:
+            c = (c * self.blind) % self.n
         for prime, exponent, crt in zip(self.primes, self.exponents, self.crts):
             m_i = primitives._pow(c, exponent, prime)
             h = ((m_i - m) * crt) % prime
             m += R * h
             R *= prime
+        if self.blind_inv:
+            m = (m * self.blind_inv) % self.n
         return m
 
     def rsasp1(self, m):

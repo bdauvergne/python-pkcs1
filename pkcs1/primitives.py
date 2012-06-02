@@ -84,7 +84,7 @@ def product(*args):
     return reduce(operator.__mul__, args)
 
 def generate_multiple_primes_key_pair(number=2, size=512, rnd=random.SystemRandom, k=DEFAULT_ITERATION,
-        primality_algorithm=None):
+        primality_algorithm=None, blind=True):
     primes = []
     lbda = 1
     bits = size // number + 1
@@ -92,7 +92,6 @@ def generate_multiple_primes_key_pair(number=2, size=512, rnd=random.SystemRando
     while len(primes) < number:
         if number - len(primes) == 1:
             bits = size - integer_bit_size(n) + 1
-        print 'bits', bits
         prime = get_prime(bits, rnd, k, algorithm=primality_algorithm)
         if prime in primes:
             continue
@@ -108,6 +107,14 @@ def generate_multiple_primes_key_pair(number=2, size=512, rnd=random.SystemRando
         e += 2
     public = keys.RsaPublicKey(n, e)
     private = keys.MultiPrimeRsaPrivateKey(primes, e)
+    while blind:
+        blind = rnd().getrandbits(private.bit_size-1)
+        private.blind = public.rsaep(blind)
+        u, v, gcd = bezout(blind, private.n)
+        if gcd == 1:
+            private.blind_inv = u if u > 0 else u + private.n
+            assert (blind * private.blind_inv) % private.n == 1
+            break
     return public, private
 
 def generate_key_pair(size=512, rnd=random.SystemRandom, k=DEFAULT_ITERATION,
