@@ -83,8 +83,8 @@ def string_xor(a, b):
 def product(*args):
     return reduce(operator.__mul__, args)
 
-def generate_multiple_primes_key_pair(number=2, size=512, rnd=random.SystemRandom, k=DEFAULT_ITERATION,
-        primality_algorithm=None, blind=True):
+def generate_multiple_primes_key_pair(size=512, number=2, rnd=random.SystemRandom, k=DEFAULT_ITERATION,
+        primality_algorithm=None, strict_size=True):
     primes = []
     lbda = 1
     bits = size // number + 1
@@ -95,7 +95,7 @@ def generate_multiple_primes_key_pair(number=2, size=512, rnd=random.SystemRando
         prime = get_prime(bits, rnd, k, algorithm=primality_algorithm)
         if prime in primes:
             continue
-        if number - len(primes) == 1 and integer_bit_size(n*prime) != size:
+        if strict_size and number - len(primes) == 1 and integer_bit_size(n*prime) != size:
             continue
         primes.append(prime)
         n *= prime
@@ -106,15 +106,7 @@ def generate_multiple_primes_key_pair(number=2, size=512, rnd=random.SystemRando
             break
         e += 2
     public = keys.RsaPublicKey(n, e)
-    private = keys.MultiPrimeRsaPrivateKey(primes, e)
-    while blind:
-        blind = rnd().getrandbits(private.bit_size-1)
-        private.blind = public.rsaep(blind)
-        u, v, gcd = bezout(blind, private.n)
-        if gcd == 1:
-            private.blind_inv = u if u > 0 else u + private.n
-            assert (blind * private.blind_inv) % private.n == 1
-            break
+    private = keys.MultiPrimeRsaPrivateKey(primes, e, blind=True, rnd=rnd)
     return public, private
 
 def generate_key_pair(size=512, rnd=random.SystemRandom, k=DEFAULT_ITERATION,
