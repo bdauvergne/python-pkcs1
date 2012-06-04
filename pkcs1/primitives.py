@@ -84,7 +84,7 @@ def product(*args):
     return reduce(operator.__mul__, args)
 
 def generate_multiple_primes_key_pair(size=512, number=2, rnd=random.SystemRandom, k=DEFAULT_ITERATION,
-        primality_algorithm=None, strict_size=True):
+        primality_algorithm=None, strict_size=True, e=0x10001):
     primes = []
     lbda = 1
     bits = size // number + 1
@@ -95,16 +95,20 @@ def generate_multiple_primes_key_pair(size=512, number=2, rnd=random.SystemRando
         prime = get_prime(bits, rnd, k, algorithm=primality_algorithm)
         if prime in primes:
             continue
+        if e is not None and fractions.gcd(e, lbda) != 1:
+            continue
         if strict_size and number - len(primes) == 1 and integer_bit_size(n*prime) != size:
             continue
         primes.append(prime)
         n *= prime
-    lbda = product(*[prime-1 for prime in primes])
-    e = 0x10001
-    while e < lbda:
-        if fractions.gcd(e, lbda) == 1:
-            break
-        e += 2
+        lbda *= prime - 1
+    if e is None:
+        e = 0x10001
+        while e < lbda:
+            if fractions.gcd(e, lbda) == 1:
+                break
+            e += 2
+    assert 3 <= e <= n-1
     public = keys.RsaPublicKey(n, e)
     private = keys.MultiPrimeRsaPrivateKey(primes, e, blind=True, rnd=rnd)
     return public, private
