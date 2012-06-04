@@ -15,7 +15,7 @@ def encode(m, embits, hash_class=hashlib.sha1,
     else:
         if s_len is None:
             s_len = h_len
-        salt = random().getrandbits(s_len*8)
+        salt = primitives.i2osp(random().getrandbits(s_len*8), s_len)
     em_len = primitives.integer_ceil(embits, 8)
     if em_len < len(m_hash) + s_len + 2:
         raise exceptions.EncodingError
