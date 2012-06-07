@@ -10,7 +10,8 @@ exponentiation if it is present.
 
 The package contains the following modules:
 
-  - pkcs1.primitives - basic RSA exponentation, integer<->byte string conversion
+  - pkcs1.primitives - integer<->byte string conversion
+  - pkcs1.keys - RSA keys classes, naive RSA encryption
   - pkcs1.primes - prime number generation
   - pkcs1.eme_pkcs1_v15 - PKCS#1 v1.5 encoding for encryption
   - pkcs1.emsa_pkcs1_v15 - PKCS#1 v1.5 encoding for signature
