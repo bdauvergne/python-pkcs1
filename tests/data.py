@@ -66,8 +66,8 @@ class PssIntData(TestVectors):
             else:
                 setattr(self, name, self.jtrs(iterator, token))
 
-        self.public_key = pkcs1.RsaPublicKey(self.modulus, self.public_exponent)
-        self.private_key = pkcs1.RsaPrivateKey(self.modulus, self.exponent)
+        self.public_key = pkcs1.keys.RsaPublicKey(self.modulus, self.public_exponent)
+        self.private_key = pkcs1.keys.RsaPrivateKey(self.modulus, self.exponent)
 
 class RsaesPkcs1V15VectorsData(TestVectors):
     path = os.path.join(os.path.dirname(__file__), 'data',
@@ -89,9 +89,9 @@ class RsaesPkcs1V15VectorsData(TestVectors):
                 ('exponent', 'Exponent:'))
         for name, token in grammar:
             setattr(self, name, self.jtrx(iterator, token))
-        self.public_key = pkcs1.RsaPublicKey(self.modulus, self.public_exponent)
-        self.private_key = pkcs1.RsaPrivateKey(self.modulus, self.exponent)
-        pkcs1.check_rsa_keys_coherency(self.public_key, self.private_key)
+        self.public_key = pkcs1.keys.RsaPublicKey(self.modulus, self.public_exponent)
+        self.private_key = pkcs1.keys.RsaPrivateKey(self.modulus, self.exponent)
+        assert self.public_key.n == self.private_key.n
         self.samples = []
 
         for j in range(20):
@@ -127,9 +127,9 @@ class RsassaPkcs1V15VectorsData(TestVectors):
                 ('exponent', 'Exponent:'))
         for name, token in grammar:
             setattr(self, name, self.jtrx(iterator, token))
-        self.public_key = pkcs1.RsaPublicKey(self.modulus, self.public_exponent)
-        self.private_key = pkcs1.RsaPrivateKey(self.modulus, self.exponent)
-        pkcs1.check_rsa_keys_coherency(self.public_key, self.private_key)
+        self.public_key = pkcs1.keys.RsaPublicKey(self.modulus, self.public_exponent)
+        self.private_key = pkcs1.keys.RsaPrivateKey(self.modulus, self.exponent)
+        assert self.public_key.n == self.private_key.n
         self.samples = []
 
         for j in range(20):
@@ -163,8 +163,8 @@ class OaepIntData(TestVectors):
             else:
                 setattr(self, name, self.jtrs(iterator, token))
 
-        self.public_key = pkcs1.RsaPublicKey(self.modulus, self.public_exponent)
-        self.private_key = pkcs1.RsaPrivateKey(self.modulus, self.exponent)
+        self.public_key = pkcs1.keys.RsaPublicKey(self.modulus, self.public_exponent)
+        self.private_key = pkcs1.keys.RsaPrivateKey(self.modulus, self.exponent)
 
 class OaepVectData(TestVectors):
     path = os.path.join(os.path.dirname(__file__), 'data',
@@ -186,9 +186,9 @@ class OaepVectData(TestVectors):
                 ('exponent', 'RSA private exponent'))
         for name, token in grammar:
             setattr(self, name, self.jtrx(iterator, token))
-        self.public_key = pkcs1.RsaPublicKey(self.modulus, self.public_exponent)
-        self.private_key = pkcs1.RsaPrivateKey(self.modulus, self.exponent)
-        pkcs1.check_rsa_keys_coherency(self.public_key, self.private_key)
+        self.public_key = pkcs1.keys.RsaPublicKey(self.modulus, self.public_exponent)
+        self.private_key = pkcs1.keys.RsaPrivateKey(self.modulus, self.exponent)
+        assert self.public_key.n == self.private_key.n
         self.samples = []
 
         for j in range(6):
@@ -224,9 +224,9 @@ class PssVectData(TestVectors):
                 ('exponent', 'RSA private exponent'))
         for name, token in grammar:
             setattr(self, name, self.jtrx(iterator, token))
-        self.public_key = pkcs1.RsaPublicKey(self.modulus, self.public_exponent)
-        self.private_key = pkcs1.RsaPrivateKey(self.modulus, self.exponent)
-        pkcs1.check_rsa_keys_coherency(self.public_key, self.private_key)
+        self.public_key = pkcs1.keys.RsaPublicKey(self.modulus, self.public_exponent)
+        self.private_key = pkcs1.keys.RsaPrivateKey(self.modulus, self.exponent)
+        assert self.public_key.n == self.private_key.n
         self.samples = []
 
         for j in range(6):

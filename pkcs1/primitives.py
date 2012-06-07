@@ -83,7 +83,7 @@ def string_xor(a, b):
 def product(*args):
     return reduce(operator.__mul__, args)
 
-def generate_multiple_primes_key_pair(size=512, number=2, rnd=random.SystemRandom, k=DEFAULT_ITERATION,
+def generate_key_pair(size=512, number=2, rnd=random.SystemRandom, k=DEFAULT_ITERATION,
         primality_algorithm=None, strict_size=True, e=0x10001):
     primes = []
     lbda = 1
@@ -112,31 +112,6 @@ def generate_multiple_primes_key_pair(size=512, number=2, rnd=random.SystemRando
     public = keys.RsaPublicKey(n, e)
     private = keys.MultiPrimeRsaPrivateKey(primes, e, blind=True, rnd=rnd)
     return public, private
-
-def generate_key_pair(size=512, rnd=random.SystemRandom, k=DEFAULT_ITERATION,
-        primality_algorithm=None):
-    '''Generates a key pair'''
-    p = get_prime(size >> 1, rnd, k, algorithm=primality_algorithm)
-    q = get_prime(size >> 1, rnd, k, algorithm=primality_algorithm)
-    n = p*q
-    lbda = (p-1)*(q-1)
-    e = 0x10001
-    while e < lbda:
-        if fractions.gcd(e, lbda) == 1:
-            break
-        e += 2
-    d, y, z = bezout(e, lbda)
-    assert z == 1
-    if d < 0:
-        d += lbda
-    assert (d*e) % lbda == 1
-    public, private = keys.RsaPublicKey(n, e), keys.RsaPrivateKey(n, d)
-    assert check_rsa_keys_coherency(public, private)
-    return public, private
-
-def check_rsa_keys_coherency(public_key, private_key):
-    '''Check that the public and private key match each other'''
-    return public_key.n == private_key.n
 
 def get_nonzero_random_bytes(length, rnd=random.SystemRandom):
     result = []
