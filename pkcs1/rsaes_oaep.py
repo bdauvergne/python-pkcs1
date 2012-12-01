@@ -18,7 +18,7 @@ def encrypt(public_key, message, label='', hash_class=hashlib.sha1,
          the hashlib interface
        mgf1 - a mask generation function
        seed - a seed to use instead of generating it using a random generator
-       random - a random generator class, respecting the random generator
+       rnd - a random generator class, respecting the random generator
        interface from the random module, if seed is None, it is used to
        generate it.
 

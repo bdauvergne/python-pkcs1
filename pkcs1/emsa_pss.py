@@ -7,7 +7,22 @@ from defaults import default_crypto_random
 
 def encode(m, embits, hash_class=hashlib.sha1,
         mgf=mgf.mgf1, salt=None, s_len=None, rnd=default_crypto_random):
+    '''Encode a message using the PKCS v2 PSS padding.
 
+       m - the message to encode
+       embits - the length of the padded message
+       mgf - a masg generating function, default is mgf1 the mask generating
+       function proposed in the PKCS#1 v2 standard.
+       hash_class - the hash algorithm to use to compute the digest of the
+       message, must conform to the hashlib class interface.
+       salt - a fixed salt string to use, if None, a random string of length
+       s_len is used instead, necessary for tests,
+       s_len - the length of the salt string when using a random generator to
+       create it, if None the length of the digest is used.
+       rnd - the random generator used to compute the salt string
+
+       Return value: the padded message
+    '''
     m_hash = hash_class(m).digest()
     h_len = len(m_hash)
     if salt is not None:
@@ -33,6 +48,19 @@ def encode(m, embits, hash_class=hashlib.sha1,
     return masked_db + h + '\xbc'
 
 def verify(m, em, embits, hash_class=hashlib.sha1, mgf=mgf.mgf1, s_len=None):
+    '''
+       Verify that a message padded using the PKCS#1 v2 PSS algorithm matched a
+       given message string.
+
+       m - the message to match
+       em - the padded message
+       embits - the length in bits of the padded message
+       hash_class - the hash algorithm used to compute the digest of the message
+       mgf - the mask generation function
+       s_len - the length of the salt string, if None the length of the digest is used.
+
+       Return: True if the message matches, False otherwise.
+    '''
     # 1. cannot verify, does not know the max input length of hash_class
     # 2.
     m_hash = hash_class(m).digest()

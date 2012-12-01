@@ -16,6 +16,19 @@ DEFAULT_ITERATION = 1000
 USE_MILLER_RABIN = True
 
 def is_prime(n, rnd=default_pseudo_random, k=DEFAULT_ITERATION, algorithm=None):
+    '''Test if n is a prime number
+
+       m - the integer to test
+       rnd - the random number generator to use for the probalistic primality
+       algorithms,
+       k - the number of iterations to use for the probabilistic primality
+       algorithms,
+       algorithm - the primality algorithm to use, default is Miller-Rabin. The
+       gmpy implementation is used if gmpy is installed.
+
+       Return value: True is n seems prime, False otherwise.
+    '''
+
     if algorithm is None:
         algorithm = PRIME_ALGO
     if algorithm == 'gmpy-miller-rabin':
@@ -33,6 +46,16 @@ def is_prime(n, rnd=default_pseudo_random, k=DEFAULT_ITERATION, algorithm=None):
 
 
 def get_prime(size=128, rnd=default_crypto_random, k=DEFAULT_ITERATION, algorithm=None):
+    '''Generate a prime number of the giver size using the is_prime() helper function.
+    
+       size - size in bits of the prime, default to 128
+       rnd - a random generator to use
+       k - the number of iteration to use for the probabilistic primality algorithms,
+       algorithm - the name of the primality algorithm to use, default is the
+       probabilistic Miller-Rabin algorithm.
+
+       Return value: a prime number, as a long integer
+    '''
     while True:
         n = rnd.getrandbits(size-2)
         n = 2 ** (size-1) + n * 2 + 1
@@ -102,6 +125,14 @@ def randomized_primality_testing(n, rnd=default_crypto_random, k=DEFAULT_ITERATI
     return True
 
 def miller_rabin(n, k, rnd=default_pseudo_random):
+    '''
+       Pure python implementation of the Miller-Rabin algorithm.
+
+       n - the integer number to test,
+       k - the number of iteration, the probability of n being prime if the
+       algorithm returns True is 1/2**k,
+       rnd - a random generator
+   '''
     s = 0
     d = n-1
     # Find nearest power of 2
