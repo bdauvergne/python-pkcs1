@@ -1,8 +1,9 @@
 import emsa_pkcs1_v15
 import primitives
 import exceptions
+import hashlib
 
-def sign(private_key, message):
+def sign(private_key, message, hash_class=hashlib.sha1):
     '''Produce a signature of string using a RSA private key and PKCS#1.5
        padding.
 
@@ -15,12 +16,13 @@ def sign(private_key, message):
        the signature string
     '''
 
-    em = emsa_pkcs1_v15.encode(message, private_key.byte_size)
+    em = emsa_pkcs1_v15.encode(message, private_key.byte_size,
+            hash_class=hash_class)
     m = primitives.os2ip(em)
     s = private_key.rsasp1(m)
     return primitives.i2osp(s, private_key.byte_size)
 
-def verify(public_key, message, signature):
+def verify(public_key, message, signature, hash_class=hashlib.sha1):
     '''Verify a signature of a message using a RSA public key and PKCS#1.5
        padding.
 
@@ -45,7 +47,8 @@ def verify(public_key, message, signature):
     except ValueError:
         raise exceptions.InvalidSignature
     try:
-        em_prime = emsa_pkcs1_v15.encode(message, public_key.byte_size)
+        em_prime = emsa_pkcs1_v15.encode(message, public_key.byte_size,
+                hash_class=hash_class)
     except ValueError:
         raise exceptions.RSAModulusTooShort
     return primitives.constant_time_cmp(em, em_prime)
