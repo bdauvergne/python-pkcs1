@@ -1,10 +1,10 @@
-import random
-
 import primitives
 import eme_pkcs1_v15
 import exceptions
 
-def encrypt(public_key, message, ps=None, rnd=random.SystemRandom):
+from defaults import default_crypto_random
+
+def encrypt(public_key, message, ps=None, rnd=default_crypto_random):
     '''Encrypt message using public_key applying PKCS#1 v1.5 padding
 
        If ps is not None it is used as the pseudo-random padding bytes,

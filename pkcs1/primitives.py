@@ -1,10 +1,10 @@
 import operator
 
 import math
-import random
 import fractions
 import keys
 
+from defaults import default_crypto_random
 try:
     import gmpy
 except ImportError:
@@ -83,7 +83,7 @@ def string_xor(a, b):
 def product(*args):
     return reduce(operator.__mul__, args)
 
-def generate_key_pair(size=512, number=2, rnd=random.SystemRandom, k=DEFAULT_ITERATION,
+def generate_key_pair(size=512, number=2, rnd=default_crypto_random, k=DEFAULT_ITERATION,
         primality_algorithm=None, strict_size=True, e=0x10001):
     primes = []
     lbda = 1
@@ -113,11 +113,9 @@ def generate_key_pair(size=512, number=2, rnd=random.SystemRandom, k=DEFAULT_ITE
     private = keys.MultiPrimeRsaPrivateKey(primes, e, blind=True, rnd=rnd)
     return public, private
 
-def get_nonzero_random_bytes(length, rnd=random.SystemRandom):
+def get_nonzero_random_bytes(length, rnd=default_crypto_random):
     result = []
     i = 0
-    if callable(rnd):
-        rnd = rnd()
     while i < length:
         l = rnd.getrandbits(12*length)
         s = i2osp(l, 3*length)

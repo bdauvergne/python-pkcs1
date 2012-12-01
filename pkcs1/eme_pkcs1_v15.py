@@ -1,9 +1,8 @@
-import random
-
 import primitives
 import exceptions
+from defaults import default_crypto_random
 
-def encode(message, k, ps=None, rnd=random.SystemRandom):
+def encode(message, k, ps=None, rnd=default_crypto_random):
     '''Take a message of length inferior to k - 11 and return
        the concatenation of length k:
 

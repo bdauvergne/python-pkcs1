@@ -1,6 +1,6 @@
 import primitives
 import exceptions
-import random
+from defaults import default_crypto_random
 
 class RsaPublicKey(object):
     __slots__ = ('n', 'e', 'bit_size', 'byte_size')
@@ -50,7 +50,7 @@ class RsaPrivateKey(object):
 class MultiPrimeRsaPrivateKey(object):
     __slots__ = ('primes', 'blind', 'blind_inv', 'n', 'e', 'exponents', 'crts', 'bit_size', 'byte_size')
 
-    def __init__(self, primes, e, blind=True, rnd=random.SystemRandom):
+    def __init__(self, primes, e, blind=True, rnd=default_crypto_random):
         self.primes = primes
         self.n = primitives.product(*primes)
         self.e = e
@@ -73,7 +73,7 @@ class MultiPrimeRsaPrivateKey(object):
         public = RsaPublicKey(self.n, self.e)
         if blind:
             while True:
-                blind_factor = rnd().getrandbits(self.bit_size-1)
+                blind_factor = rnd.getrandbits(self.bit_size-1)
                 self.blind = public.rsaep(blind_factor)
                 u, v, gcd = primitives.bezout(blind_factor, self.n)
                 if gcd == 1:

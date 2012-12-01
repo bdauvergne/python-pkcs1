@@ -1,12 +1,12 @@
 import hashlib
-import random
 
 import primitives
 import exceptions
 import mgf
+from defaults import default_crypto_random
 
 def encrypt(public_key, message, label='', hash_class=hashlib.sha1,
-        mgf=mgf.mgf1, seed=None, random=random.SystemRandom):
+        mgf=mgf.mgf1, seed=None, rnd=default_crypto_random):
     '''Encrypt a byte message using a RSA public key and the OAEP wrapping
        algorithm,
 
@@ -37,7 +37,7 @@ def encrypt(public_key, message, label='', hash_class=hashlib.sha1,
     ps = '\0' * int(max_message_length - len(message))
     db = ''.join((label_hash, ps, '\x01', message))
     if not seed:
-        seed = primitives.i2osp(random().getrandbits(h_len*8), h_len)
+        seed = primitives.i2osp(rnd.getrandbits(h_len*8), h_len)
     db_mask = mgf(seed, k - h_len - 1, hash_class=hash_class)
     masked_db = primitives.string_xor(db, db_mask)
     seed_mask = mgf(masked_db, h_len, hash_class=hash_class)

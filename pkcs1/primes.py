@@ -1,7 +1,8 @@
-import random
 import math
 import fractions
 import primitives
+
+from defaults import default_pseudo_random, default_crypto_random
 
 PRIME_ALGO = 'miller-rabin'
 try:
@@ -14,7 +15,7 @@ DEFAULT_ITERATION = 1000
 
 USE_MILLER_RABIN = True
 
-def is_prime(n, rnd=random.SystemRandom, k=DEFAULT_ITERATION, algorithm=None):
+def is_prime(n, rnd=default_pseudo_random, k=DEFAULT_ITERATION, algorithm=None):
     if algorithm is None:
         algorithm = PRIME_ALGO
     if algorithm == 'gmpy-miller-rabin':
@@ -31,9 +32,7 @@ def is_prime(n, rnd=random.SystemRandom, k=DEFAULT_ITERATION, algorithm=None):
         raise NotImplemented
 
 
-def get_prime(size=128, rnd=random.SystemRandom, k=DEFAULT_ITERATION, algorithm=None):
-    if callable(rnd):
-        rnd = rnd()
+def get_prime(size=128, rnd=default_crypto_random, k=DEFAULT_ITERATION, algorithm=None):
     while True:
         n = rnd.getrandbits(size-2)
         n = 2 ** (size-1) + n * 2 + 1
@@ -78,7 +77,7 @@ def jacobi_witness(x, n):
     if j == f: return False
     return True
 
-def randomized_primality_testing(n, rnd=random.SystemRandom, k=DEFAULT_ITERATION):
+def randomized_primality_testing(n, rnd=default_crypto_random, k=DEFAULT_ITERATION):
     '''Calculates whether n is composite (which is always correct) or
     prime (which is incorrect with error probability 2**-k)
 
@@ -97,12 +96,12 @@ def randomized_primality_testing(n, rnd=random.SystemRandom, k=DEFAULT_ITERATION
     # this means we can use range(k) rather than range(t)
 
     for _ in range(k):
-        x = random.randint(0, n-1)
+        x = rnd.randint(0, n-1)
         if jacobi_witness(x, n): return False
     
     return True
 
-def miller_rabin(n, k, rnd=random.SystemRandom):
+def miller_rabin(n, k, rnd=default_pseudo_random):
     s = 0
     d = n-1
     # Find nearest power of 2
@@ -111,11 +110,9 @@ def miller_rabin(n, k, rnd=random.SystemRandom):
     s = fractions.gcd(2**s, n-1)
     d = (n-1) // s
     s = primitives.integer_bit_size(s) - 1
-    if callable(rnd):
-        rnd = rnd()
     while k:
         k = k - 1
-        a = random.randint(2, n-2)
+        a = rnd.randint(2, n-2)
         x = pow(a,d,n)
         if x == 1 or x == n - 1:
             continue

@@ -1,12 +1,12 @@
 import hashlib
-import random
 
 import primitives
 import mgf
 import exceptions
+from defaults import default_crypto_random
 
 def encode(m, embits, hash_class=hashlib.sha1,
-        mgf=mgf.mgf1, salt=None, s_len=None, random=random.SystemRandom):
+        mgf=mgf.mgf1, salt=None, s_len=None, rnd=default_crypto_random):
 
     m_hash = hash_class(m).digest()
     h_len = len(m_hash)
@@ -15,7 +15,7 @@ def encode(m, embits, hash_class=hashlib.sha1,
     else:
         if s_len is None:
             s_len = h_len
-        salt = primitives.i2osp(random().getrandbits(s_len*8), s_len)
+        salt = primitives.i2osp(rnd.getrandbits(s_len*8), s_len)
     em_len = primitives.integer_ceil(embits, 8)
     if em_len < len(m_hash) + s_len + 2:
         raise exceptions.EncodingError
