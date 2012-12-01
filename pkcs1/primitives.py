@@ -29,7 +29,7 @@ def integer_ceil(a, b):
     quanta, mod = divmod(a, b)
     if mod:
         quanta += 1
-    return int(math.ceil(float(a) / float(b)))
+    return quanta
 
 def integer_byte_size(n):
     '''Returns the number of bytes necessary to store the integer n.'''
