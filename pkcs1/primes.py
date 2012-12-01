@@ -5,11 +5,12 @@ import primitives
 from defaults import default_pseudo_random, default_crypto_random
 
 PRIME_ALGO = 'miller-rabin'
+gmpy = None
 try:
     import gmpy
     PRIME_ALGO = 'gmpy-miller-rabin'
 except ImportError:
-    gmpy = None
+    pass
 
 DEFAULT_ITERATION = 1000
 
