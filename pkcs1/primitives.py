@@ -176,6 +176,7 @@ def constant_time_cmp(a, b):
     for x, y in zip(a,b):
         result &= (x == y)
     return result
+
 import textwrap
 
 def dump_hex(data):
