@@ -1,4 +1,3 @@
-import math
 import fractions
 import primitives
 
