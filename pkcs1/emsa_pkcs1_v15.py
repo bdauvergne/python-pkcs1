@@ -16,7 +16,7 @@ def encode(message, em_len, ps=None, hash_class=hashlib.sha1):
     try:
         t = '%s%s' % (DIGEST_INFO_PREFIXES[hash_class], h)
     except KeyError:
-        raise NotImplemented('hash algorithm is unsupported', hash_class)
+        raise NotImplementedError('hash algorithm is unsupported', hash_class)
     if em_len < len(t) + 11:
         raise exceptions.MessageTooShort
     ps_len = em_len - len(t) - 3

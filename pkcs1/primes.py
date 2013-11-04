@@ -33,7 +33,7 @@ def is_prime(n, rnd=default_pseudo_random, k=DEFAULT_ITERATION, algorithm=None):
         algorithm = PRIME_ALGO
     if algorithm == 'gmpy-miller-rabin':
         if not gmpy:
-            raise NotImplemented
+            raise NotImplementedError
         return gmpy.is_prime(n, k)
     elif algorithm == 'miller-rabin':
         # miller rabin probability of primality is 1/4**k
@@ -42,7 +42,7 @@ def is_prime(n, rnd=default_pseudo_random, k=DEFAULT_ITERATION, algorithm=None):
         # for jacobi it's 1/2**k
         return randomized_primality_testing(n, rnd=rnd, k=k*2)
     else:
-        raise NotImplemented
+        raise NotImplementedError
 
 
 def get_prime(size=128, rnd=default_crypto_random, k=DEFAULT_ITERATION, algorithm=None):
