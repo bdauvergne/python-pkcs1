@@ -25,7 +25,7 @@ def sign(private_key, message,
     mod_bits = private_key.bit_size
     embits = mod_bits - 1
     em = emsa_pss_encode(message, embits, hash_class=hash_class,
-            mgf1=mgf1, rnd=rnd)
+            mgf=mgf1, rnd=rnd)
     m = primitives.os2ip(em)
     s = private_key.rsasp1(m)
     return primitives.i2osp(s, private_key.byte_size)
@@ -53,4 +53,4 @@ def verify(public_key, message, signature,
     em_len = primitives.integer_ceil(embits, 8)
     em = primitives.i2osp(m, em_len)
     return emsa_pss_verify(message, em, embits, hash_class=hash_class,
-            mgf1=mgf1)
+            mgf=mgf1)
