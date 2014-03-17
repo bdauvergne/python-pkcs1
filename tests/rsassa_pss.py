@@ -3,7 +3,7 @@ import functools
 
 from pkcs1 import emsa_pss
 from pkcs1 import rsassa_pss
-from pkcs1 import primitives
+from pkcs1 import keys
 
 import data
 
@@ -42,7 +42,7 @@ class RsassaPssTests(unittest.TestCase):
                 self.assertTrue(result)
 
     def test_generate_and_sign(self):
-        pub, priv = primitives.generate_key_pair(number=5, size=1024)
+        pub, priv = keys.generate_key_pair(number=5, size=1024)
         message = 'hello world'
         signature = rsassa_pss.sign(priv, message)
         self.assertTrue(rsassa_pss.verify(pub, message, signature))

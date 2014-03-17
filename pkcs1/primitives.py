@@ -1,8 +1,6 @@
 import operator
 
 import math
-import fractions
-import keys
 
 from defaults import default_crypto_random
 
@@ -11,7 +9,6 @@ try:
 except ImportError:
     gmpy = None
 
-from primes import get_prime, DEFAULT_ITERATION
 import exceptions
 
 
@@ -103,57 +100,6 @@ def string_xor(a, b):
 def product(*args):
     '''Computes the product of its arguments.'''
     return reduce(operator.__mul__, args)
-
-def generate_key_pair(size=512, number=2, rnd=default_crypto_random, k=DEFAULT_ITERATION,
-        primality_algorithm=None, strict_size=True, e=0x10001):
-    '''Generates an RSA key pair.
-
-       size:
-           the bit size of the modulus, default to 512.
-       number:
-           the number of primes to use, default to 2.
-       rnd:
-           the random number generator to use, default to SystemRandom from the
-           random library.
-       k:
-           the number of iteration to use for the probabilistic primality
-           tests.
-       primality_algorithm:
-           the primality algorithm to use.
-       strict_size:
-           whether to use size as a lower bound or a strict goal.
-       e:
-           the public key exponent.
-
-       Returns the pair (public_key, private_key).
-    '''
-    primes = []
-    lbda = 1
-    bits = size // number + 1
-    n = 1
-    while len(primes) < number:
-        if number - len(primes) == 1:
-            bits = size - integer_bit_size(n) + 1
-        prime = get_prime(bits, rnd, k, algorithm=primality_algorithm)
-        if prime in primes:
-            continue
-        if e is not None and fractions.gcd(e, lbda) != 1:
-            continue
-        if strict_size and number - len(primes) == 1 and integer_bit_size(n*prime) != size:
-            continue
-        primes.append(prime)
-        n *= prime
-        lbda *= prime - 1
-    if e is None:
-        e = 0x10001
-        while e < lbda:
-            if fractions.gcd(e, lbda) == 1:
-                break
-            e += 2
-    assert 3 <= e <= n-1
-    public = keys.RsaPublicKey(n, e)
-    private = keys.MultiPrimeRsaPrivateKey(primes, e, blind=True, rnd=rnd)
-    return public, private
 
 def get_nonzero_random_bytes(length, rnd=default_crypto_random):
     '''
