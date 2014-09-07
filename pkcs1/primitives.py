@@ -1,15 +1,21 @@
+import binascii
+
 import operator
 
 import math
 
-from defaults import default_crypto_random
+import sys
+
+from functools import reduce
+
+from .defaults import default_crypto_random
 
 try:
     import gmpy
 except ImportError:
     gmpy = None
 
-import exceptions
+from . import exceptions
 
 
 '''Primitive functions extracted from the PKCS1 RFC'''
@@ -81,21 +87,24 @@ def i2osp(x, x_len):
         h = h[:-1]
     if len(h) & 1 == 1:
         h = '0%s' % h
-    x = h.decode('hex')
-    return '\x00' * int(x_len-len(x)) + x
+    x = binascii.unhexlify(h)
+    return b'\x00' * int(x_len-len(x)) + x
 
 def os2ip(x):
     '''Converts the byte string x representing an integer reprented using the
        big-endian convient to an integer.
     '''
-    h = x.encode('hex')
+    h = binascii.hexlify(x)
     return int(h, 16)
 
 def string_xor(a, b):
     '''Computes the XOR operator between two byte strings. If the strings are
        of different lengths, the result string is as long as the shorter.
     '''
-    return ''.join((chr(ord(x) ^ ord(y)) for (x,y) in zip(a,b)))
+    if sys.version_info[0] < 3:
+        return ''.join((chr(ord(x) ^ ord(y)) for (x,y) in zip(a,b)))
+    else:
+        return bytes(x ^ y for (x, y) in zip(a, b))
 
 def product(*args):
     '''Computes the product of its arguments.'''
@@ -127,5 +136,5 @@ import textwrap
 
 def dump_hex(data):
     if isinstance(data, basestring):
-        print 'length', len(data)
-        print textwrap.fill(''.join(['%s ' % x.encode('hex') for x in data]), 72)
+        print('length', len(data))
+        print(textwrap.fill(''.join(['%s ' % x.encode('hex') for x in data]), 72))
