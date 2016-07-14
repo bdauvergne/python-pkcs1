@@ -2,7 +2,7 @@ import unittest
 
 from pkcs1 import emsa_pss
 
-from data import PssIntData
+from .data import PssIntData
 
 class EmsaPssTests(unittest.TestCase):
     int_data = PssIntData()

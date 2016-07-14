@@ -5,7 +5,7 @@ from pkcs1 import emsa_pss
 from pkcs1 import rsassa_pss
 from pkcs1 import keys
 
-import data
+from . import data
 
 class RsassaPssTests(unittest.TestCase):
     int_data = data.PssIntData()
@@ -43,6 +43,6 @@ class RsassaPssTests(unittest.TestCase):
 
     def test_generate_and_sign(self):
         pub, priv = keys.generate_key_pair(number=5, size=1024)
-        message = 'hello world'
+        message = b'hello world'
         signature = rsassa_pss.sign(priv, message)
         self.assertTrue(rsassa_pss.verify(pub, message, signature))

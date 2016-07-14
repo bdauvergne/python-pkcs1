@@ -1,3 +1,5 @@
+import binascii
+
 import os.path
 
 import pkcs1
@@ -11,7 +13,7 @@ class TestVectors(object):
        RSA laboratories.
     '''
     def __init__(self):
-        txt = file(self.path).read()
+        txt = open(self.path).read()
         iterator = iter(txt.splitlines())
         self.parse(iterator)
 
@@ -36,7 +38,7 @@ class TestVectors(object):
         return int(self.read_hex_string(iterator), 16)
 
     def read_hex_octet_string(self, iterator):
-        return self.read_hex_string(iterator).decode('hex')
+        return binascii.unhexlify(self.read_hex_string(iterator))
 
     def jtrx(self, iterator, token):
         self.jump_to(iterator, token)

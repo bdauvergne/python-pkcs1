@@ -1,6 +1,6 @@
-import primitives
-import exceptions
-from defaults import default_crypto_random
+from . import primitives
+from . import exceptions
+from .defaults import default_crypto_random
 
 def encode(message, k, ps=None, rnd=default_crypto_random):
     '''Take a message of length inferior to k - 11 and return
@@ -29,16 +29,16 @@ def encode(message, k, ps=None, rnd=default_crypto_random):
                     len(ps), ps_len)
     else:
         ps = primitives.get_nonzero_random_bytes(ps_len, rnd=rnd)
-    return '\x00\x02%s\x00%s' % (ps, message)
+    return b'\x00\x02' + ps + b'\x00' + message
 
 def decode(message):
     '''
        Verify that a padded message conform to the PKCSv1 1.5 encoding and
        return the unpadded message.
     '''
-    if message[0:2] != '\x00\x02':
+    if message[:2] != b'\x00\x02':
         raise exceptions.DecryptionError
-    i = message.find('\x00', 2)
+    i = message.find(b'\x00', 2)
     if i == -1:
         raise exceptions.DecryptionError
     if i < 10:

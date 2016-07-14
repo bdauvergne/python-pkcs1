@@ -1,6 +1,6 @@
 import hashlib
 
-from primitives import integer_ceil, i2osp
+from .primitives import integer_ceil, i2osp
 
 def mgf1(mgf_seed, mask_len, hash_class=hashlib.sha1):
     '''
@@ -22,3 +22,8 @@ def mgf1(mgf_seed, mask_len, hash_class=hashlib.sha1):
     return T[:mask_len]
 
 
+try:
+    xrange
+except NameError:
+    # Python 3
+    xrange = range

@@ -16,3 +16,8 @@ class NaiveEncryptionTests(unittest.TestCase):
         for i in xrange(100):
             u = random.getrandbits(priv.bit_size-1)
             self.assertEqual(priv.rsadp(pub.rsaep(u)), u)
+
+try:
+    xrange
+except NameError:
+    xrange = range

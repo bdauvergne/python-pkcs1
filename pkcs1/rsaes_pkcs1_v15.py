@@ -1,8 +1,8 @@
-import primitives
-import eme_pkcs1_v15
-import exceptions
+from . import primitives
+from . import eme_pkcs1_v15
+from . import exceptions
 
-from defaults import default_crypto_random
+from .defaults import default_crypto_random
 
 def encrypt(public_key, message, ps=None, rnd=default_crypto_random):
     '''Encrypt message using public_key applying PKCS#1 v1.5 padding

@@ -35,7 +35,7 @@ def encrypt(public_key, message, label=b'', hash_class=hashlib.sha1,
     hash.update(label)
     label_hash = hash.digest()
     ps = b'\0' * int(max_message_length - len(message))
-    db = ''.join((label_hash, ps, '\x01', message))
+    db = b''.join((label_hash, ps, b'\x01', message))
     if not seed:
         seed = primitives.i2osp(rnd.getrandbits(h_len*8), h_len)
     db_mask = mgf(seed, k - h_len - 1, hash_class=hash_class)

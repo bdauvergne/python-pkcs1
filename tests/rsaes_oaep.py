@@ -2,7 +2,7 @@ import unittest
 
 from pkcs1 import rsaes_oaep
 
-import data
+from . import data
 
 class OaepTests(unittest.TestCase):
     oaep_int_data = data.OaepIntData()

@@ -1,9 +1,9 @@
 import hashlib
 
-import emsa_pss
-import primitives
-import mgf
-from defaults import default_crypto_random
+from . import emsa_pss
+from . import primitives
+from . import mgf
+from .defaults import default_crypto_random
 
 def sign(private_key, message,
         emsa_pss_encode=emsa_pss.encode,

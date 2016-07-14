@@ -1,9 +1,9 @@
 import fractions
-import primitives
-import exceptions
+from . import primitives
+from . import exceptions
 
-from defaults import default_crypto_random
-from primes import get_prime, DEFAULT_ITERATION
+from .defaults import default_crypto_random
+from .primes import get_prime, DEFAULT_ITERATION
 
 class RsaPublicKey(object):
     __slots__ = ('n', 'e', 'bit_size', 'byte_size')
