@@ -1,6 +1,9 @@
 python-pkcs1
 ------------
 
+.. image:: https://travis-ci.org/bdauvergne/python-pkcs1.svg?branch=master
+    :target: https://travis-ci.org/bdauvergne/python-pkcs1
+
 This package implements the PKCS #1 v2.0 standard from RSA Laboratories. It
 aims at a full and tested coverage of the standard, maximum portability by
 using only pure python and external dependencies only for performance gains.
