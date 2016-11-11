@@ -1,11 +1,11 @@
 import hashlib
 
-import primitives
-import exceptions
-import mgf
-from defaults import default_crypto_random
+from . import primitives
+from . import exceptions
+from . import mgf
+from .defaults import default_crypto_random
 
-def encrypt(public_key, message, label='', hash_class=hashlib.sha1,
+def encrypt(public_key, message, label=b'', hash_class=hashlib.sha1,
         mgf=mgf.mgf1, seed=None, rnd=default_crypto_random):
     '''Encrypt a byte message using a RSA public key and the OAEP wrapping
        algorithm,
@@ -34,21 +34,21 @@ def encrypt(public_key, message, label='', hash_class=hashlib.sha1,
         raise exceptions.MessageTooLong
     hash.update(label)
     label_hash = hash.digest()
-    ps = '\0' * int(max_message_length - len(message))
-    db = ''.join((label_hash, ps, '\x01', message))
+    ps = b'\0' * int(max_message_length - len(message))
+    db = b''.join((label_hash, ps, b'\x01', message))
     if not seed:
         seed = primitives.i2osp(rnd.getrandbits(h_len*8), h_len)
     db_mask = mgf(seed, k - h_len - 1, hash_class=hash_class)
     masked_db = primitives.string_xor(db, db_mask)
     seed_mask = mgf(masked_db, h_len, hash_class=hash_class)
     masked_seed = primitives.string_xor(seed, seed_mask)
-    em = ''.join(('\x00', masked_seed, masked_db))
+    em = b''.join((b'\x00', masked_seed, masked_db))
     m = primitives.os2ip(em)
     c = public_key.rsaep(m)
     output = primitives.i2osp(c, k)
     return output
 
-def decrypt(private_key, message, label='', hash_class=hashlib.sha1,
+def decrypt(private_key, message, label=b'', hash_class=hashlib.sha1,
         mgf=mgf.mgf1):
     '''Decrypt a byte message using a RSA private key and the OAEP wrapping algorithm,
 
@@ -77,17 +77,18 @@ def decrypt(private_key, message, label='', hash_class=hashlib.sha1,
     hash.update(label)
     label_hash = hash.digest()
     y, masked_seed, masked_db = em[0], em[1:h_len+1], em[1+h_len:]
-    if y != '\x00':
+    if y != b'\x00' and y != 0:
         raise ValueError('decryption error')
     seed_mask = mgf(masked_db, h_len)
     seed = primitives.string_xor(masked_seed, seed_mask)
     db_mask = mgf(seed, k - h_len - 1)
     db = primitives.string_xor(masked_db, db_mask)
     label_hash_prime, rest = db[:h_len], db[h_len:]
-    i = rest.find('\x01')
+    i = rest.find(b'\x01')
     if i == -1:
         raise exceptions.DecryptionError
-    if rest[:i].strip('\x00') != '':
+    if rest[:i].strip(b'\x00') != b'':
+        print(rest[:i].strip(b'\x00'))
         raise exceptions.DecryptionError
     m = rest[i+1:]
     if label_hash_prime != label_hash:

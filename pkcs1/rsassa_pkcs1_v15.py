@@ -1,6 +1,6 @@
-import emsa_pkcs1_v15
-import primitives
-import exceptions
+from . import emsa_pkcs1_v15
+from . import primitives
+from . import exceptions
 import hashlib
 
 def sign(private_key, message, hash_class=hashlib.sha1):

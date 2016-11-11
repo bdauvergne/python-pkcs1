@@ -1,7 +1,7 @@
 import fractions
-import primitives
+from . import primitives
 
-from defaults import default_pseudo_random, default_crypto_random
+from .defaults import default_pseudo_random, default_crypto_random
 
 PRIME_ALGO = 'miller-rabin'
 gmpy = None
@@ -157,3 +157,8 @@ def miller_rabin(n, k, rnd=default_pseudo_random):
             return False
     return True
 
+try:
+    xrange
+except NameError:
+    # Python 3
+    xrange = range

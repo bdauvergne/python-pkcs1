@@ -2,7 +2,7 @@ import unittest
 
 from pkcs1 import rsaes_pkcs1_v15
 
-import data
+from . import data
 
 class RsaesPkcs1V15Tests(unittest.TestCase):
     data = data.RsaesPkcs1V15VectorsData()
