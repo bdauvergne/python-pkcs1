@@ -23,7 +23,7 @@ from . import exceptions
 def _pow(a, b, mod):
     '''Exponentiation function using acceleration from gmpy if possible'''
     if gmpy:
-        return long(pow(gmpy.mpz(a), gmpy.mpz(b), gmpy.mpz(mod)))
+        return int(pow(gmpy.mpz(a), gmpy.mpz(b), gmpy.mpz(mod)))
     else:
         return pow(a, b, mod)
 
