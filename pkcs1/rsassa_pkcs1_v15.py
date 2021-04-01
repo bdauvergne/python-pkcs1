@@ -49,6 +49,8 @@ def verify(public_key, message, signature, hash_class=hashlib.sha1):
     try:
         em_prime = emsa_pkcs1_v15.encode(message, public_key.byte_size,
                 hash_class=hash_class)
+        em_prime_imp = emsa_pkcs1_v15.encode(message, public_key.byte_size,
+                hash_class=hash_class, explicit_null_param=False)
     except ValueError:
         raise exceptions.RSAModulusTooShort
-    return primitives.constant_time_cmp(em, em_prime)
+    return primitives.constant_time_cmp(em, em_prime) or primitives.constant_time_cmp(em, em_prime_imp)
