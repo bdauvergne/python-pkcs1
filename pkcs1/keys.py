@@ -1,4 +1,4 @@
-import fractions
+import math
 from . import primitives
 from . import exceptions
 
@@ -146,7 +146,7 @@ def generate_key_pair(size=512, number=2, rnd=default_crypto_random, k=DEFAULT_I
         prime = get_prime(bits, rnd, k, algorithm=primality_algorithm)
         if prime in primes:
             continue
-        if e is not None and fractions.gcd(e, lbda) != 1:
+        if e is not None and math.gcd(e, lbda) != 1:
             continue
         if strict_size and number - len(primes) == 1 and primitives.integer_bit_size(n*prime) != size:
             continue
@@ -156,7 +156,7 @@ def generate_key_pair(size=512, number=2, rnd=default_crypto_random, k=DEFAULT_I
     if e is None:
         e = 0x10001
         while e < lbda:
-            if fractions.gcd(e, lbda) == 1:
+            if math.gcd(e, lbda) == 1:
                 break
             e += 2
     assert 3 <= e <= n-1
