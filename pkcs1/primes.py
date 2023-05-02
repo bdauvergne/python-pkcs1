@@ -1,4 +1,4 @@
-import fractions
+import math
 from . import primitives
 
 from .defaults import default_pseudo_random, default_crypto_random
@@ -138,7 +138,7 @@ def miller_rabin(n, k, rnd=default_pseudo_random):
     # Find nearest power of 2
     s = primitives.integer_bit_size(n)
     # Find greatest factor which is a power of 2
-    s = fractions.gcd(2**s, n-1)
+    s = math.gcd(2**s, n-1)
     d = (n-1) // s
     s = primitives.integer_bit_size(s) - 1
     while k:
