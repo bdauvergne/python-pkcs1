@@ -10,11 +10,22 @@ DIGEST_INFO_PREFIXES = {
       hashlib.sha512: b'\x30\x51\x30\x0d\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x03\x05\x00\x04\x40',
 }
 
-def encode(message, em_len, ps=None, hash_class=hashlib.sha1):
+DIGEST_INFO_PREFIXES_IMP = {
+      hashlib.md5: b'\x30\x1e\x30\x0a\x06\x08\x2a\x86\x48\x86\xf7\x0d\x02\x05\x04\x10',
+      hashlib.sha1:  b'\x30\x1f\x30\x07\x06\x05\x2b\x0e\x03\x02\x1a\x04\x14',
+      hashlib.sha256: b'\x30\x2f\x30\x0b\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x01\x04\x20',
+      hashlib.sha384: b'\x30\x3f\x30\x0b\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x02\x04\x30',
+      hashlib.sha512: b'\x30\x4f\x30\x0b\x06\x09\x60\x86\x48\x01\x65\x03\x04\x02\x03\x04\x40',
+}
+
+def encode(message, em_len, ps=None, hash_class=hashlib.sha1, explicit_null_param=True):
     halgo = hash_class(message)
     h = halgo.digest()
     try:
-        t = DIGEST_INFO_PREFIXES[hash_class] + h
+        if explicit_null_param:
+            t = DIGEST_INFO_PREFIXES[hash_class] + h
+        else:
+            t = DIGEST_INFO_PREFIXES_IMP[hash_class] + h
     except KeyError:
         raise NotImplementedError('hash algorithm is unsupported', hash_class)
     if em_len < len(t) + 11:
